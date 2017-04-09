@@ -1,9 +1,11 @@
 from db import * 
+from predict import shopping_list_for_household
+
+shopping_list_for_household(1, 55)
 
 print(len(Household.select()))
 
-
 for household in Household.select():
-    for transaction in household.transactions:
-        print(transaction.WEEK_NO, transaction.DAY, transaction.PRODUCT.COMMODITY_DESC)
+    print(household.id)
+    break
     print('============================================================')
