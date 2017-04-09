@@ -13,6 +13,8 @@ def shopping_list_for_household(household, day):
         if transaction.PRODUCT.SUB_COMMODITY_DESC in working:
             state_for = working[transaction.PRODUCT.SUB_COMMODITY_DESC]
             period = transaction.DAY-state_for['last']
+            if period == 0:
+                continue
             state_for['average-period'] = (state_for['average-period']*state_for['samples']+period)/(state_for['samples']+1)
             state_for['samples'] += 1
             state_for['periods'].append(period)
@@ -27,17 +29,21 @@ def shopping_list_for_household(household, day):
                                                                }
 
     shopping_list = {}
+
     for SUB_COMMODITY_DESC, state in working.items():
         if state['samples'] == 0:
             continue
         error = 0 
         for period in state['periods']:
             error += (period - state['average-period'])*(period - state['average-period'])
-        if error/len(state['periods']) < 10 and math.fabs(day-state['last'] - state['average-period']) < math.sqrt(error/len(state['periods'])):
+
+        standard_deviation = math.sqrt(error/len(state['periods']))
+        print(standard_deviation, math.fabs(day-state['last'] - state['average-period']))
+        if standard_deviation < 10 and math.fabs(day-state['last'] - state['average-period']) < standard_deviation:
             push_list(shopping_list, state["COMMODITY_DESC"], {
                                                                 "id": state["id"],
                                                                 "name": SUB_COMMODITY_DESC,
-                                                                "last_purchased": state[last],
+                                                                "last_purchased": state['last'],
                                                                 "norm_interval": state["average-period"],
                                                                 "amount": 0
                                                                 })
