@@ -9,7 +9,7 @@ app = Flask(__name__)
 @app.route("/shopping-list/<int:customer>")
 def shopping_list(customer):
     return jsonify({
-                            "departments": shopping_list_for_household(2300, 247) 
+                            "departments": shopping_list_for_household(customer, 247) 
                         })
 
 if __name__ == '__main__':
